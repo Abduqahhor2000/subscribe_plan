@@ -23,6 +23,7 @@ function Header() {
     <header className={`${scrolled && "bg-[#E10856]"}`}>
       <div className="flex items-center space-x-2 md:space-x-10">
         <Image
+          priority
           src={"/logo.svg"}
           alt={"logo"}
           width={56}

@@ -23,7 +23,7 @@ export default function Hero({ trending }: HeroProps): JSX.Element {
           src={`${image_base}${movie?.backdrop_path || movie?.poster_path}`}
           alt={`${movie?.title}`}
           fill
-          className="object-cover"
+          className="object-cover brightness-50"
         />
       </div>
 
@@ -49,9 +49,9 @@ export default function Hero({ trending }: HeroProps): JSX.Element {
       </p>
 
       <div>
-        <button className="flex justify-center items-center bg-white/60 font-bold text-black w-[200px] h-[56px] rounded-full">
+        <div className="flex justify-center cursor-pointer items-center bg-white/60 font-bold text-black w-[200px] h-[56px] rounded-full">
           <TbPlayerPlay className="h-5 w-5 md-h-8 md:w-8" /> Watch now
-        </button>
+        </div>
       </div>
     </div>
   );

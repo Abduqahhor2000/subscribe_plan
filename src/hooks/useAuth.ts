@@ -15,6 +15,7 @@ export const useAuth = () => {
 
 		await createUserWithEmailAndPassword(auth, email, password)
 			.then(res => {
+				setError("")
 				setUser(res.user);
 				router.push('/');
 				setIsLoading(true);
@@ -28,6 +29,7 @@ export const useAuth = () => {
 
 		await signInWithEmailAndPassword(auth, email, password)
 			.then(res => {
+				setError("")
 				setUser(res.user);
 				router.push('/');
 				setIsLoading(true);
@@ -39,14 +41,12 @@ export const useAuth = () => {
 	const logout = async () => {
 		setIsLoading(true);
 
-		if(!user){
-			setIsLoading(false)
-			router.push("/auth")
-			return;
-		}
-
 		signOut(auth)
-			.then(() => setUser(null))
+			.then(() => {
+				setUser(null)
+				router.push("/auth")
+				setIsLoading(true);
+			})
 			.catch(error => setError(error.message))
 			.finally(() => setIsLoading(false));
 	};

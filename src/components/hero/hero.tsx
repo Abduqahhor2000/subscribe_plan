@@ -5,16 +5,21 @@ import { image_base } from "src/helper/constants";
 import Image from "next/image";
 import { TbPlayerPlay } from "react-icons/tb";
 import ReactStars from "react-stars";
+import { useInfoStore } from 'src/store';
 
 export default function Hero({ trending }: HeroProps): JSX.Element {
   const [movie, setMovie] = useState<IMovie>({} as IMovie);
+  const { setModal, setCurrentMovie } = useInfoStore();
 
   useEffect(() => {
     const randomMovie = trending[Math.floor(Math.random() * trending.length)];
     setMovie(randomMovie);
   }, [trending]);
 
-  // console.log(movie);
+  const handleCurrentMovie = () => {
+		setModal(true);
+		setCurrentMovie(movie);
+	};
 
   return (
     <div className="flex flex-col space-y-2 py-20 md:space-y-4 lg:h-[65vh] lg:pb-12 lg:justify-center">
@@ -49,7 +54,7 @@ export default function Hero({ trending }: HeroProps): JSX.Element {
       </p>
 
       <div>
-        <div className="flex justify-center cursor-pointer items-center bg-white/60 font-bold text-black w-[200px] h-[56px] rounded-full">
+        <div onClick={handleCurrentMovie} className="flex justify-center cursor-pointer items-center bg-white/60 font-bold text-black w-[200px] h-[56px] rounded-full space-x-2 hover:bg-white/80 transition-all">
           <TbPlayerPlay className="h-5 w-5 md-h-8 md:w-8" /> Watch now
         </div>
       </div>

@@ -16,4 +16,9 @@ export interface IMovie {
     vote_count: number;
     name: string;
     original_name: string;
+    release_date?: string;
+}
+
+export interface Element {
+	type: 'Trailer' | 'Clip' | 'Opening Credits' | 'Behind the Scenes';
 }

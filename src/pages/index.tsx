@@ -1,6 +1,8 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { useContext } from "react";
 import { Header, Hero, Row } from "src/components";
+import { AuthContext } from "src/context/auth.context";
 import { IMovie } from "src/interfaces/app.interface";
 import { API_REQUEST } from "src/services/api.service";
 
@@ -10,11 +12,10 @@ export default function Home({
   tvTopRated,
   popular,
   documentary,
-  comedy,
-  family,
-  history,
 }: HomeProps): JSX.Element {
-  // console.log(topRated[0]);
+  const { isLoading } = useContext(AuthContext);
+
+  if (isLoading) return <>{null}</>;
 
   return (
     <div className="relative min-h-screen">
@@ -29,11 +30,8 @@ export default function Home({
         <Hero trending={trending} />
         <Row title="Top Rated" movies={topRated} />
         <Row title="TV Shou" movies={tvTopRated} isBig={true} />
-        <Row title="Popular" movies={popular.reverse()} />
-        <Row title="Documentary" movies={documentary} />
-        {/* <Row title="Comedy" movies={comedy.reverse()} isBig={true} />
-        <Row title="Family" movies={family} />
-        <Row title="History" movies={history} /> */}
+        <Row title="Documentary" movies={popular.reverse()} />
+        <Row title="Popular" movies={popular} />
       </main>
     </div>
   );
@@ -49,9 +47,6 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   const documentary = await fetch(API_REQUEST.documentary).then((res) =>
     res.json()
   );
-  const comedy = await fetch(API_REQUEST.comedy).then((res) => res.json());
-  const family = await fetch(API_REQUEST.family).then((res) => res.json());
-  const history = await fetch(API_REQUEST.history).then((res) => res.json());
 
   return {
     props: {
@@ -60,9 +55,6 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
       tvTopRated: tvTopRated.results,
       popular: popular.results,
       documentary: documentary.results,
-      comedy: comedy.results,
-      family: family.results,
-      history: history.results,
     },
   };
 };
@@ -73,7 +65,4 @@ interface HomeProps {
   tvTopRated: IMovie[];
   popular: IMovie[];
   documentary: IMovie[];
-  comedy: IMovie[];
-  family: IMovie[];
-  history: IMovie[];
 }

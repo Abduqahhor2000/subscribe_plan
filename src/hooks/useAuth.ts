@@ -1,4 +1,5 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User } from 'firebase/auth';
+import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { auth } from 'src/firebase';
@@ -18,6 +19,12 @@ export const useAuth = () => {
 				setError("")
 				setUser(res.user);
 				router.push('/');
+				fetch('/api/customer', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email: res.user.email, user_id: res.user.uid }),
+				});
+				Cookies.set('user_id', res.user.uid);
 				setIsLoading(true);
 			})
 			.catch(error => setError(error.message))
@@ -32,6 +39,7 @@ export const useAuth = () => {
 				setError("")
 				setUser(res.user);
 				router.push('/');
+				Cookies.set('user_id', res.user.uid);
 				setIsLoading(true);
 			})
 			.catch(error => setError(error.message))
@@ -46,6 +54,7 @@ export const useAuth = () => {
 				setUser(null)
 				router.push("/auth")
 				setIsLoading(true);
+				Cookies.remove('user_id');
 			})
 			.catch(error => setError(error.message))
 			.finally(() => setIsLoading(false));

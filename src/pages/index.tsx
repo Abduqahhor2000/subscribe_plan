@@ -13,13 +13,13 @@ export default function Home({
   tvTopRated,
   documentary,
   products,
+  subscription,
 }: HomeProps): JSX.Element {
   const { isLoading, user } = useContext(AuthContext);
   const {modal} = useInfoStore()
-  const subscription = false;
   
   if (isLoading || !user) return <>{null}</>;
-	if (!subscription) return <SubscriptionPlan products={products}  />;
+	if (!subscription.length) return <SubscriptionPlan products={products}  />;
 
   return (
     <div className={`relative min-h-screen ${modal && '!h-screen overflow-hidden'}`}>
@@ -42,22 +42,27 @@ export default function Home({
   );
 }
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const [trending, topRated, tvTopRated, documentary, products] = await Promise.all([
-    fetch(API_REQUEST.trending).then((res) => res.json()),
-    fetch(API_REQUEST.top_rated).then((res) => res.json()),
-    fetch(API_REQUEST.tv_top_rated).then((res) => res.json()),
-    fetch(API_REQUEST.documentary).then((res) => res.json()),
-    fetch(API_REQUEST.products_list).then(res => res.json()),
-  ]) 
+export const getServerSideProps: GetServerSideProps<HomeProps> = async ({ req }) => {
+	const user_id = req.cookies.user_id;
 
-  return {
+	const [trending, topRated, tvTopRated, documentary, products, subscription] =
+		await Promise.all([
+			fetch(API_REQUEST.trending).then(res => res.json()),
+			fetch(API_REQUEST.top_rated).then(res => res.json()),
+			fetch(API_REQUEST.tv_top_rated).then(res => res.json()),
+			fetch(API_REQUEST.documentary).then(res => res.json()),
+			fetch(API_REQUEST.products_list).then(res => res.json()),
+			fetch(`${API_REQUEST.subscription}/${user_id}`).then(res => res.json()),
+		]); 
+                                                             
+  return { 
     props: {
       trending: trending.results,
       topRated: topRated.results,
       tvTopRated: tvTopRated.results,
       documentary: documentary.results,
       products: products.products.data,
+      subscription: subscription.subscription.data,
     },
   };
 };
@@ -68,4 +73,5 @@ interface HomeProps {
   tvTopRated: IMovie[];
   documentary: IMovie[];
   products: Product[];
+  subscription: string[];
 }

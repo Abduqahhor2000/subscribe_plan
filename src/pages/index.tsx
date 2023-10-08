@@ -1,8 +1,6 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import { useContext } from "react";
 import { Header, Hero, Modal, Row, SubscriptionPlan } from "src/components";
-import { AuthContext } from "src/context/auth.context";
 import { IMovie, Product } from "src/interfaces/app.interface";
 import { API_REQUEST } from "src/services/api.service";
 import { useInfoStore } from "src/store";
@@ -15,10 +13,8 @@ export default function Home({
   products,
   subscription,
 }: HomeProps): JSX.Element {
-  const { isLoading, user } = useContext(AuthContext);
   const {modal} = useInfoStore()
   
-  if (isLoading || !user) return <>{null}</>;
 	if (!subscription.length) return <SubscriptionPlan products={products}  />;
 
   return (
@@ -44,6 +40,12 @@ export default function Home({
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async ({ req }) => {
 	const user_id = req.cookies.user_id;
+
+  if (!user_id) {
+		return {
+			redirect: { destination: '/auth', permanent: false },
+		};
+	}
 
 	const [trending, topRated, tvTopRated, documentary, products, subscription] =
 		await Promise.all([
